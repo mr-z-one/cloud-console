@@ -63,19 +63,23 @@ function parseState($st="")  {
     return   $result;
 }
 
+function Debug_log($input){
+        $std =fopen('php://stdin', 'w');
+         fwrite( $std,$input."\n");
+         fclose(  $std);
+}
+
     $state= $_GET['state']; 
-    $path= null;
+    $path= "-1";
     $host= "";
 
 
-    if (isset($state)){
-        var_dump(parseState($state));
-    }
+  
     $params = parseState($state);
 
     for ($i=0; $i < sizeof($params) ; $i+=2) { 
          if ( $params[$i] == "return_to"){
-            if ($path == null){
+            if ($path == "-1"){
                 $path = $params[$i+1];
             }
          }else   if ( $params[$i] == "target_host"){
@@ -91,7 +95,7 @@ function parseState($st="")  {
         http_response_code(400);
         die(1);
     }
-     if ($path != null && !str_starts_with( $path,"/")){
+     if ($path != "-1" && !str_starts_with( $path,"/")){
            echo "path is invalid";
                  http_response_code(400);
             die(1);
@@ -99,7 +103,8 @@ function parseState($st="")  {
 
      if (str_contains( $path,"</")){
        $path=  str_replace("</","<\\/",$path);
-    }
+       }
+   
 
         if ( !str_ends_with($host,"example.com")){
              echo "host is invalid";
@@ -129,13 +134,20 @@ function parseState($st="")  {
     <title>Document</title>
 </head>
 <body>
-
+  <?php
+   if (isset($state)){
+        var_dump(parseState($state));
+    } 
+    ?>
 
     <script>    
   
-    
-        window.location = "https://<?php echo $host?><?php echo ($path==""? "/":$path)?>?token=AAA";
+        <?php    Debug_log("my_path= ".$path); ?>
+        window.location = "https://<?php echo $host?><?php echo ($path=="-1"? "/":$path);?>?token=AAA";
 
     </script>
+
+
+
 </body>
 </html>
