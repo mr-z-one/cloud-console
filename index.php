@@ -72,7 +72,7 @@ function Debug_log($input){
     $state= $_GET['state']; 
     $path= "-1";
     $host= "";
-
+    $has_queryParams = false;
 
   
     $params = parseState($state);
@@ -88,13 +88,19 @@ function Debug_log($input){
             }
          }
     }
+          Debug_log("HOSt= ".$host); 
+      Debug_log("my_pathd= ".$path); 
 
-    
     if (str_contains( $path,"\\") ||str_contains( $path,"@")){
         echo "path is invalid";
         http_response_code(400);
         die(1);
     }
+
+      if (str_contains( $path,"?")){
+       $hac_queryParams=true;
+    }
+
      if ($path != "-1" && !str_starts_with( $path,"/")){
            echo "path is invalid";
                  http_response_code(400);
@@ -115,6 +121,7 @@ function Debug_log($input){
             echo "host is invalid";
                   http_response_code(400);
             die(1);
+            
         }
       if (!preg_match("/^[a-zA-Z0-9.:-]+$/",$host)){
             echo "host is invalid";
@@ -143,7 +150,7 @@ function Debug_log($input){
     <script>    
   
         <?php    Debug_log("my_path= ".$path); ?>
-        window.location = "https://<?php echo $host?><?php echo ($path=="-1"? "/":$path);?>?token=AAA";
+        window.location = "https://<?php echo $host?><?php echo ($path=="-1"? "/":$path);?><?php echo ($has_queryParams==true? "&token=AAAA":"?token=AAAA");?>";
 
     </script>
 
